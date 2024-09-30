@@ -1,80 +1,80 @@
-use egui::{Key, Vec2};
-use std::{collections::HashSet, time::Instant};
+use egui::{Key, Rect};
+use std::{
+    collections::HashSet,
+    time::{Duration, Instant},
+};
 
-struct Gui {
-    key_map: HashSet<Key>,
-    player_pos: Vec2,
-    last_update: Instant,
-    window_size: Vec2,
+use crate::player::Player;
+
+pub struct Context {
+    pub dt: Duration,
+    pub key_map: HashSet<Key>,
+    pub drawable_area: Rect,
+    pub painter: Option<egui::Painter>,
 }
 
-impl Gui {
-    fn new(window_size: Vec2) -> Self {
+struct Gui {
+    last_update: Instant,
+    player: Player,
+    ctx: Context,
+}
+
+impl Default for Gui {
+    fn default() -> Self {
         Self {
-            key_map: HashSet::default(),
-            player_pos: Vec2::default(),
             last_update: Instant::now(),
-            window_size,
+            player: Player::default(),
+            ctx: Context {
+                dt: Duration::ZERO,
+                key_map: HashSet::new(),
+                drawable_area: Rect::ZERO,
+                painter: None,
+            },
         }
     }
 }
 
 pub fn run() -> eframe::Result {
-    let window_size = Vec2::new(480.0, 360.0);
     let options = eframe::NativeOptions {
-        viewport: egui::ViewportBuilder::default().with_inner_size(window_size),
+        viewport: egui::ViewportBuilder::default().with_inner_size([480.0, 360.0]),
         ..Default::default()
     };
     eframe::run_native(
         "rustout",
         options,
-        Box::new(|_cc| Ok(Box::new(Gui::new(window_size)))),
+        Box::new(|_cc| Ok(Box::new(Gui::default()))),
     )
 }
 
 impl eframe::App for Gui {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
-        let scale = self.window_size.min_elem();
-
         // read input
         ctx.input(|i| {
             for key in [Key::A, Key::D, Key::W, Key::S] {
                 if i.key_down(key) {
-                    self.key_map.insert(key);
+                    self.ctx.key_map.insert(key);
                 } else if i.key_released(key) {
-                    self.key_map.remove(&key);
+                    self.ctx.key_map.remove(&key);
                 }
             }
         });
 
-        // update player position
-        let dt = self.last_update.elapsed().as_secs_f32();
+        // update dt
+        self.ctx.dt = self.last_update.elapsed();
         self.last_update = Instant::now();
-        if self.key_map.contains(&Key::A) {
-            self.player_pos.x -= 0.5 * scale * dt;
-        }
-        if self.key_map.contains(&Key::D) {
-            self.player_pos.x += 0.5 * scale * dt;
-        }
-        if self.key_map.contains(&Key::W) {
-            self.player_pos.y -= 0.5 * scale * dt;
-        }
-        if self.key_map.contains(&Key::S) {
-            self.player_pos.y += 0.5 * scale * dt;
-        }
 
-        // render player
         egui::CentralPanel::default().show(ctx, |ui| {
+            // create painter
             let (response, painter) =
                 ui.allocate_painter(ui.available_size(), egui::Sense::hover());
+            self.ctx.drawable_area = response.rect;
+            self.ctx.painter = Some(painter);
 
-            let rect = response.rect;
-            painter.circle_filled(
-                rect.center() + self.player_pos,
-                scale * 0.1,
-                egui::Color32::ORANGE,
-            )
+            // render player
+            self.player.draw(&self.ctx, ui);
         });
+
+        // update at 30 fps
         ctx.request_repaint_after_secs(1.0 / 30.0);
     }
 }
