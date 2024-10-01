@@ -1,5 +1,3 @@
-#![allow(dead_code)]
-
 use egui::{Rect, Vec2};
 
 #[derive(Debug, Eq, PartialEq, Hash)]
