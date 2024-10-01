@@ -28,7 +28,7 @@ impl Default for Blocks {
 }
 
 impl Blocks {
-    pub fn draw(&mut self, ctx: &Context) {
+    pub fn draw(&mut self, ctx: &Context, _ui: &mut egui::Ui) {
         let area = ctx.drawable_area;
         let scale = area.width();
 

@@ -48,7 +48,10 @@ pub fn run() -> eframe::Result {
     eframe::run_native(
         "rustout",
         options,
-        Box::new(|_cc| Ok(Box::new(Gui::default()))),
+        Box::new(|cc| {
+            egui_extras::install_image_loaders(&cc.egui_ctx);
+            Ok(Box::new(Gui::default()))
+        }),
     )
 }
 
@@ -104,9 +107,9 @@ impl eframe::App for Gui {
                     self.player.update(&self.ctx);
                     self.ball.update(&self.ctx, &mut self.blocks, &self.player);
 
-                    self.player.draw(&self.ctx);
-                    self.blocks.draw(&self.ctx);
-                    self.ball.draw(&self.ctx);
+                    self.player.draw(&self.ctx, ui);
+                    self.blocks.draw(&self.ctx, ui);
+                    self.ball.draw(&self.ctx, ui);
                 }
             });
 

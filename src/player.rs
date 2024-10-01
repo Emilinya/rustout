@@ -20,7 +20,7 @@ impl Entity for Player {
         )
     }
 
-    fn draw(&mut self, ctx: &Context) {
+    fn draw(&mut self, ctx: &Context, _ui: &mut egui::Ui) {
         if let Some(painter) = &ctx.painter {
             painter.rect_filled(
                 self.get_bounding_box(ctx),

@@ -33,14 +33,9 @@ impl Entity for Ball {
         Rect::from_center_size(ctx.drawable_area.center() + self.pos, Vec2::new(size, size))
     }
 
-    fn draw(&mut self, ctx: &Context) {
-        if let Some(painter) = &ctx.painter {
-            painter.rect_filled(
-                self.get_bounding_box(ctx),
-                egui::Rounding::ZERO,
-                egui::Color32::GRAY,
-            );
-        }
+    fn draw(&mut self, ctx: &Context, ui: &mut egui::Ui) {
+        egui::Image::new(egui::include_image!("../rust.png"))
+            .paint_at(ui, self.get_bounding_box(ctx));
     }
 
     fn reset(&mut self) {
