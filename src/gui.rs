@@ -63,16 +63,18 @@ impl eframe::App for Gui {
         self.ctx.dt = self.last_update.elapsed();
         self.last_update = Instant::now();
 
-        egui::CentralPanel::default().show(ctx, |ui| {
-            // create painter
-            let (response, painter) =
-                ui.allocate_painter(ui.available_size(), egui::Sense::hover());
-            self.ctx.drawable_area = response.rect;
-            self.ctx.painter = Some(painter);
+        egui::CentralPanel::default()
+            .frame(egui::Frame::none())
+            .show(ctx, |ui| {
+                // create painter
+                let (response, painter) =
+                    ui.allocate_painter(ui.available_size(), egui::Sense::hover());
+                self.ctx.drawable_area = response.rect;
+                self.ctx.painter = Some(painter);
 
-            // render player
-            self.player.draw(&self.ctx, ui);
-        });
+                // render player
+                self.player.draw(&self.ctx, ui);
+            });
 
         // update at 30 fps
         ctx.request_repaint_after_secs(1.0 / 30.0);
