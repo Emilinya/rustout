@@ -1,6 +1,9 @@
-use egui::{Rect, Vec2};
-
-use crate::{entity::Entity, gui::Context};
+use crate::entity::Entity;
+use rust_training_tool::{
+    egui,
+    egui::{Rect, Vec2},
+    gui::Context,
+};
 
 pub struct Blocks {
     pub blocks: Option<Vec<Block>>,
@@ -25,9 +28,8 @@ impl Entity for Block {
             return;
         }
 
-        if let Some(painter) = ctx.painter.as_ref() {
-            painter.rect_filled(self.get_bounding_box(ctx), egui::Rounding::ZERO, self.color);
-        }
+        ctx.painter
+            .rect_filled(self.get_bounding_box(ctx), egui::Rounding::ZERO, self.color);
     }
 
     fn reset(&mut self) {

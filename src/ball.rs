@@ -1,13 +1,12 @@
-use egui::{Rect, Vec2};
-
 use std::collections::HashSet;
 
-use crate::{
-    blocks::Blocks,
-    entity::Entity,
+use crate::{blocks::Blocks, entity::Entity, player::Player};
+
+use egui::{Rect, Vec2};
+use rust_training_tool::{
+    collision::{collide_with_boundary, collide_with_rect, BounceDirection},
+    egui,
     gui::Context,
-    player::Player,
-    utils::{collide_with_boundary, collide_with_rect, BounceDirection},
 };
 
 const SIZE: f32 = 0.05;

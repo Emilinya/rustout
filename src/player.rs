@@ -1,6 +1,9 @@
-use egui::{Key, Rect, Vec2};
-
-use crate::{entity::Entity, gui::Context};
+use crate::entity::Entity;
+use rust_training_tool::{
+    egui,
+    egui::{Key, Rect, Vec2},
+    gui::Context,
+};
 
 const RATIO: f32 = 8.0;
 const HEIGHT: f32 = 0.03;
@@ -21,13 +24,11 @@ impl Entity for Player {
     }
 
     fn draw(&mut self, ctx: &Context, _ui: &mut egui::Ui) {
-        if let Some(painter) = &ctx.painter {
-            painter.rect_filled(
-                self.get_bounding_box(ctx),
-                egui::Rounding::ZERO,
-                egui::Color32::ORANGE,
-            );
-        }
+        ctx.painter.rect_filled(
+            self.get_bounding_box(ctx),
+            egui::Rounding::ZERO,
+            egui::Color32::ORANGE,
+        );
     }
 
     fn reset(&mut self) {
